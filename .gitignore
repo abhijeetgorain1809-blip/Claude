@@ -1,18 +1,557 @@
-# Build and Release Folders
-bin-debug/
-bin-release/
-[Oo]bj/
-[Bb]in/
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>I'm Sorry 🥺</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,600;0,700;0,800;1,400&family=Pacifico&display=swap');
 
-# Other files and folders
-.settings/
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-# Executables
-*.swf
-*.air
-*.ipa
-*.apk
+:root {
+  --pink: #f9a8c9;
+  --pink-deep: #e8749a;
+  --pink-light: #fce4ec;
+  --pink-bg: #fdf0f5;
+  --red: #e53935;
+  --green: #43a047;
+  --card-bg: rgba(255,255,255,0.93);
+  --text: #4a2040;
+  --subtext: #9e6080;
+}
 
-# Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
-# should NOT be excluded as they contain compiler settings and other important
-# information for Eclipse / Flash Builder.
+html, body {
+  width: 100%; height: 100%;
+  font-family: 'Nunito', sans-serif;
+  background: var(--pink-bg);
+  overflow: hidden;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── Animated background ── */
+#bg {
+  position: fixed; inset: 0; z-index: 0;
+  background: linear-gradient(160deg, #fde8f0 0%, #fce4ec 40%, #f8bbd0 100%);
+  overflow: hidden;
+}
+
+/* Floating painted flowers (CSS-drawn) */
+.bg-flower {
+  position: absolute;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  opacity: 0.18;
+  animation: floatF var(--fd, 8s) ease-in-out infinite alternate;
+  animation-delay: var(--fdl, 0s);
+}
+@keyframes floatF {
+  from { transform: translateY(0) rotate(var(--fr, 0deg)) scale(1); }
+  to   { transform: translateY(-18px) rotate(calc(var(--fr, 0deg) + 8deg)) scale(1.04); }
+}
+
+/* Floating hearts */
+.heart-float {
+  position: absolute;
+  font-size: var(--hs, 20px);
+  opacity: 0;
+  animation: heartRise var(--hd, 5s) ease-in var(--hdl, 0s) infinite;
+  pointer-events: none;
+}
+@keyframes heartRise {
+  0%   { transform: translateY(0) scale(0.8) rotate(var(--hr,-10deg)); opacity: 0; }
+  15%  { opacity: 0.55; }
+  85%  { opacity: 0.3; }
+  100% { transform: translateY(-110vh) scale(1.1) rotate(var(--hr2,10deg)); opacity: 0; }
+}
+
+/* Sparkles */
+.sparkle {
+  position: absolute;
+  color: #f9c74f;
+  font-size: var(--ss,14px);
+  opacity: 0;
+  animation: sparkPop var(--sd,3s) ease-in-out var(--sdl,0s) infinite;
+  pointer-events: none;
+}
+@keyframes sparkPop {
+  0%,100% { opacity:0; transform:scale(0) rotate(0deg); }
+  40%,60%  { opacity:0.85; transform:scale(1) rotate(180deg); }
+}
+
+/* ── Card ── */
+#card-wrap {
+  position: fixed; inset: 0; z-index: 10;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  pointer-events: none;
+}
+
+#card {
+  background: var(--card-bg);
+  border-radius: 28px;
+  padding: 32px 28px 28px;
+  max-width: 340px; width: 100%;
+  box-shadow:
+    0 8px 40px rgba(232,116,154,0.22),
+    0 2px 12px rgba(232,116,154,0.12),
+    0 0 0 1px rgba(249,168,201,0.3);
+  text-align: center;
+  pointer-events: all;
+  position: relative;
+  animation: cardIn 0.8s cubic-bezier(.22,1.3,.4,1) forwards;
+  transform: scale(0.85) translateY(30px);
+  opacity: 0;
+}
+@keyframes cardIn {
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+/* Panda SVG */
+#panda-wrap {
+  width: 130px; height: 130px;
+  margin: 0 auto 10px;
+  position: relative;
+}
+#panda-wrap svg { width: 100%; height: 100%; }
+
+/* Panda bounce */
+#panda-wrap {
+  animation: pandaBounce 2.8s ease-in-out infinite;
+}
+@keyframes pandaBounce {
+  0%,100% { transform: translateY(0) rotate(-1deg); }
+  50%      { transform: translateY(-8px) rotate(1deg); }
+}
+
+/* Panda teardrop */
+.tear {
+  animation: tearDrop 2.2s ease-in-out infinite;
+  animation-delay: var(--td, 0s);
+}
+@keyframes tearDrop {
+  0%,40%  { opacity: 0; transform: translateY(0); }
+  50%     { opacity: 1; transform: translateY(0); }
+  100%    { opacity: 0; transform: translateY(10px); }
+}
+
+.title {
+  font-family: 'Pacifico', cursive;
+  font-size: 26px;
+  color: var(--pink-deep);
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--subtext);
+  font-weight: 400;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+/* Buttons */
+#btn-area {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  min-height: 48px;
+}
+
+.btn-yes, .btn-no {
+  padding: 12px 28px;
+  border-radius: 50px;
+  border: none;
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.btn-yes {
+  background: linear-gradient(135deg, #4caf50, #43a047);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(67,160,71,0.35);
+  animation: yesWiggle 1s ease-in-out infinite;
+}
+@keyframes yesWiggle {
+  0%,100% { transform: scale(1); }
+  25%     { transform: scale(1.06) rotate(-2deg); }
+  75%     { transform: scale(1.06) rotate(2deg); }
+}
+.btn-yes:active { transform: scale(0.95) !important; }
+
+.btn-no {
+  background: linear-gradient(135deg, #ef5350, #e53935);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(229,57,53,0.3);
+  transition: all 0.2s;
+  position: relative;
+  z-index: 5;
+}
+.btn-no:active { transform: scale(0.93); }
+
+/* Extra YES buttons that spawn */
+.yes-extra {
+  position: fixed;
+  z-index: 30;
+  padding: 11px 22px;
+  border-radius: 50px;
+  border: none;
+  background: linear-gradient(135deg, #4caf50, #43a047);
+  color: #fff;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(67,160,71,0.4);
+  animation: popIn 0.4s cubic-bezier(.22,1.4,.4,1) forwards;
+  transform: scale(0);
+  pointer-events: all;
+  white-space: nowrap;
+}
+@keyframes popIn {
+  to { transform: scale(1); }
+}
+.yes-extra:hover { transform: scale(1.08) !important; }
+.yes-extra:active { transform: scale(0.93) !important; }
+
+/* ── YES screen ── */
+#yes-screen {
+  position: fixed; inset: 0; z-index: 100;
+  background: linear-gradient(135deg, #fce4ec, #f8bbd0, #fce4ec);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.5s ease;
+  text-align: center; padding: 30px;
+  overflow: hidden;
+}
+#yes-screen.show { opacity: 1; pointer-events: all; }
+
+.yes-title {
+  font-family: 'Pacifico', cursive;
+  font-size: clamp(30px, 8vw, 52px);
+  color: var(--pink-deep);
+  margin-bottom: 14px;
+  animation: bounceIn 0.7s cubic-bezier(.22,1.4,.4,1) forwards;
+  transform: scale(0);
+  opacity: 0;
+}
+@keyframes bounceIn {
+  to { transform: scale(1); opacity: 1; }
+}
+
+.yes-sub {
+  font-size: clamp(15px, 4vw, 18px);
+  color: var(--subtext);
+  font-weight: 600;
+  max-width: 300px;
+  line-height: 1.5;
+  animation: bounceIn 0.7s 0.15s cubic-bezier(.22,1.4,.4,1) forwards;
+  transform: scale(0); opacity: 0;
+}
+
+.yes-hearts {
+  font-size: clamp(40px, 12vw, 70px);
+  margin-bottom: 18px;
+  animation: bounceIn 0.6s 0.05s cubic-bezier(.22,1.4,.4,1) forwards;
+  transform: scale(0); opacity: 0;
+}
+
+/* Watermark */
+#watermark {
+  position: fixed; bottom: 10px; right: 14px;
+  z-index: 200; display: flex; flex-direction: column;
+  align-items: flex-end; gap: 1px; pointer-events: none;
+}
+.wm-coded {
+  font-size: 9px; font-weight: 300; letter-spacing: 0.22em;
+  text-transform: uppercase; color: rgba(0,0,0,0.2); line-height: 1;
+  font-family: 'Nunito', sans-serif;
+}
+.wm-name {
+  font-family: 'Pacifico', cursive; font-size: 12px; letter-spacing: 0.1em;
+  background: linear-gradient(135deg, #e879a0 0%, #c084fc 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; line-height: 1.3;
+}
+</style>
+</head>
+<body>
+
+<!-- Background -->
+<div id="bg"></div>
+
+<!-- Main Card -->
+<div id="card-wrap">
+  <div id="card">
+    <!-- Panda SVG -->
+    <div id="panda-wrap">
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Body -->
+        <ellipse cx="100" cy="148" rx="52" ry="46" fill="#f5f5f5"/>
+        <!-- Ears (black patches) -->
+        <circle cx="56" cy="62" r="22" fill="#2d2d2d"/>
+        <circle cx="144" cy="62" r="22" fill="#2d2d2d"/>
+        <!-- Ear inner -->
+        <circle cx="56" cy="62" r="13" fill="#555"/>
+        <circle cx="144" cy="62" r="13" fill="#555"/>
+        <!-- Head -->
+        <circle cx="100" cy="92" r="52" fill="#f5f5f5"/>
+        <!-- Eye patches -->
+        <ellipse cx="78" cy="88" rx="16" ry="14" fill="#2d2d2d"/>
+        <ellipse cx="122" cy="88" rx="16" ry="14" fill="#2d2d2d"/>
+        <!-- Eyes (sad) -->
+        <ellipse cx="78" cy="90" rx="7" ry="7" fill="white"/>
+        <ellipse cx="122" cy="90" rx="7" ry="7" fill="white"/>
+        <!-- Pupils looking down-sad -->
+        <circle cx="79" cy="92" r="4" fill="#1a1a1a"/>
+        <circle cx="123" cy="92" r="4" fill="#1a1a1a"/>
+        <!-- Eye shine -->
+        <circle cx="81" cy="90" r="1.5" fill="white"/>
+        <circle cx="125" cy="90" r="1.5" fill="white"/>
+        <!-- Sad eyebrows -->
+        <path d="M66 76 Q78 70 88 76" stroke="#2d2d2d" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M112 76 Q122 70 134 76" stroke="#2d2d2d" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <!-- Blush -->
+        <ellipse cx="62" cy="104" rx="13" ry="8" fill="#f48fb1" opacity="0.55"/>
+        <ellipse cx="138" cy="104" rx="13" ry="8" fill="#f48fb1" opacity="0.55"/>
+        <!-- Sad mouth -->
+        <path d="M88 114 Q100 108 112 114" stroke="#b06080" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <!-- Nose -->
+        <ellipse cx="100" cy="108" rx="7" ry="5" fill="#d4a0b0"/>
+        <!-- Tear drops -->
+        <ellipse class="tear" style="--td:0s" cx="70" cy="100" rx="3" ry="4.5" fill="#89d4f5" opacity="0.85"/>
+        <ellipse class="tear" style="--td:1.1s" cx="130" cy="100" rx="3" ry="4.5" fill="#89d4f5" opacity="0.85"/>
+        <!-- Arms -->
+        <ellipse cx="58" cy="158" rx="16" ry="10" fill="#e0e0e0" transform="rotate(-30,58,158)"/>
+        <ellipse cx="142" cy="158" rx="16" ry="10" fill="#e0e0e0" transform="rotate(30,142,158)"/>
+        <!-- Phone / letter -->
+        <rect x="82" y="162" width="36" height="26" rx="4" fill="#90caf9" opacity="0.85"/>
+        <rect x="86" y="166" width="28" height="16" rx="2" fill="white" opacity="0.7"/>
+        <!-- Heart on phone -->
+        <text x="96" y="178" font-size="10" fill="#e879a0">♥</text>
+        <!-- Tummy spot -->
+        <ellipse cx="100" cy="150" rx="28" ry="22" fill="#ffe0ec" opacity="0.5"/>
+      </svg>
+    </div>
+
+    <div class="title">I'm Sorry! 🥺</div>
+    <div class="subtitle">I know I messed up…<br>Can you please forgive me?</div>
+
+    <div id="btn-area">
+      <button class="btn-yes" id="btn-yes-main" onclick="handleYes()">Yes 🥰</button>
+      <button class="btn-no" id="btn-no-main" onclick="handleNo()">No 😤</button>
+    </div>
+  </div>
+</div>
+
+<!-- YES screen -->
+<div id="yes-screen">
+  <div class="yes-hearts">💖✨💖</div>
+  <div class="yes-title">Yay! Thank You!!</div>
+  <div class="yes-sub">You're the best thing that ever happened to me 🥺💕</div>
+</div>
+
+<!-- Watermark -->
+<div id="watermark">
+  <span class="wm-coded">coded by</span>
+  <span class="wm-name">MR. ABHIJEET</span>
+</div>
+
+<script>
+// ── Background flowers ─────────────────────────────────────────────
+const bg = document.getElementById('bg');
+const flowerColors = ['#f48fb1','#f06292','#ec407a','#f8bbd0','#e91e8c','#ffb3c6'];
+for (let i = 0; i < 14; i++) {
+  const f = document.createElement('div');
+  f.className = 'bg-flower';
+  const sz = 60 + Math.random() * 120;
+  f.style.cssText = `
+    width:${sz}px; height:${sz * 1.2}px;
+    left:${Math.random()*95}%; top:${Math.random()*95}%;
+    background:${flowerColors[Math.floor(Math.random()*flowerColors.length)]};
+    --fd:${(Math.random()*5+5).toFixed(1)}s;
+    --fdl:${(Math.random()*4).toFixed(1)}s;
+    --fr:${(Math.random()*40-20).toFixed(0)}deg;
+    transform: rotate(${(Math.random()*40-20).toFixed(0)}deg);
+  `;
+  bg.appendChild(f);
+}
+
+// ── Floating hearts ────────────────────────────────────────────────
+const heartEmojis = ['❤️','🩷','💕','💗','💓','💞','🌸','✨'];
+for (let i = 0; i < 16; i++) {
+  const h = document.createElement('div');
+  h.className = 'heart-float';
+  h.textContent = heartEmojis[Math.floor(Math.random()*heartEmojis.length)];
+  h.style.cssText = `
+    left:${Math.random()*95}%;
+    bottom:${-5}%;
+    --hs:${(Math.random()*16+12).toFixed(0)}px;
+    --hd:${(Math.random()*5+4).toFixed(1)}s;
+    --hdl:${(Math.random()*6).toFixed(1)}s;
+    --hr:${(Math.random()*30-15).toFixed(0)}deg;
+    --hr2:${(Math.random()*30-15).toFixed(0)}deg;
+  `;
+  bg.appendChild(h);
+}
+
+// ── Sparkles ───────────────────────────────────────────────────────
+for (let i = 0; i < 10; i++) {
+  const s = document.createElement('div');
+  s.className = 'sparkle';
+  s.textContent = ['✨','⭐','💫','🌟'][Math.floor(Math.random()*4)];
+  s.style.cssText = `
+    left:${Math.random()*90+5}%; top:${Math.random()*80+5}%;
+    --ss:${(Math.random()*10+10).toFixed(0)}px;
+    --sd:${(Math.random()*3+2).toFixed(1)}s;
+    --sdl:${(Math.random()*5).toFixed(1)}s;
+  `;
+  bg.appendChild(s);
+}
+
+// ── No button logic ────────────────────────────────────────────────
+let noClickCount = 0;
+const spawnedYes = [];
+
+const yesSayings = [
+  'Yes! 💕','Yes Please 🥺','Forgive me! 🙏','Of course! 💖',
+  'Yes Yes Yes! 🌸','Pleaseee 🥹','Yes!! 😭','100% Yes 💗',
+  'Absolutely! ✨','Yes foreverrr 💞','Yes bestie 🥰','YESSS!! 💓'
+];
+
+function handleNo() {
+  noClickCount++;
+  const noBtn = document.getElementById('btn-no-main');
+
+  // Spawn a wave of YES buttons each click
+  const count = noClickCount <= 2 ? 3 + noClickCount * 2 : 5 + noClickCount * 3;
+
+  for (let i = 0; i < count; i++) {
+    spawnYesButton();
+  }
+
+  // After 3+ clicks, cover the No button too
+  if (noClickCount >= 3) {
+    setTimeout(() => {
+      const btn = document.createElement('button');
+      btn.className = 'yes-extra';
+      btn.style.fontSize = '16px';
+      btn.style.padding = '13px 30px';
+      btn.textContent = 'Just say YES! 🥺💕';
+      btn.onclick = handleYes;
+
+      // Position directly over the no button
+      const rect = noBtn.getBoundingClientRect();
+      btn.style.left = rect.left + 'px';
+      btn.style.top = rect.top + 'px';
+      btn.style.width = rect.width + 'px';
+      btn.style.zIndex = 9999;
+      document.body.appendChild(btn);
+      spawnedYes.push(btn);
+
+      // Also hide No button visually
+      noBtn.style.transition = 'opacity 0.3s, transform 0.3s';
+      noBtn.style.opacity = '0';
+      noBtn.style.transform = 'scale(0.5)';
+      noBtn.style.pointerEvents = 'none';
+    }, 200);
+  }
+
+  // Shake the card
+  const card = document.getElementById('card');
+  card.style.animation = 'shake 0.4s ease';
+  setTimeout(() => { card.style.animation = ''; }, 420);
+}
+
+function spawnYesButton() {
+  const btn = document.createElement('button');
+  btn.className = 'yes-extra';
+  const saying = yesSayings[Math.floor(Math.random() * yesSayings.length)];
+  btn.textContent = saying;
+
+  // Scale based on no click count
+  const scale = 0.7 + Math.random() * 0.6 + noClickCount * 0.06;
+  const fontSize = Math.min(9 + noClickCount * 1.5 + Math.random() * 5, 20);
+  btn.style.fontSize = fontSize + 'px';
+  btn.style.padding = `${8 + noClickCount}px ${16 + noClickCount * 2}px`;
+
+  // Random position all over screen
+  const margin = 10;
+  const maxX = window.innerWidth - 160;
+  const maxY = window.innerHeight - 60;
+  const x = margin + Math.random() * maxX;
+  const y = margin + Math.random() * maxY;
+  btn.style.left = x + 'px';
+  btn.style.top = y + 'px';
+
+  // Random rotation for chaos
+  const rot = (Math.random() - 0.5) * 30;
+  btn.style.transformOrigin = 'center';
+  btn.style.transform = `scale(0) rotate(${rot}deg)`;
+  btn.style.animationTimingFunction = 'cubic-bezier(.22,1.4,.4,1)';
+
+  btn.onclick = handleYes;
+  document.body.appendChild(btn);
+  spawnedYes.push(btn);
+
+  // Override animation end to keep scale with rotation
+  btn.addEventListener('animationend', () => {
+    btn.style.transform = `scale(1) rotate(${rot}deg)`;
+  });
+}
+
+function handleYes() {
+  const ys = document.getElementById('yes-screen');
+  ys.classList.add('show');
+
+  // Shoot hearts everywhere
+  for (let i = 0; i < 25; i++) {
+    setTimeout(() => shootHeart(), i * 60);
+  }
+}
+
+function shootHeart() {
+  const h = document.createElement('div');
+  h.style.cssText = `
+    position:fixed;
+    left:${Math.random()*100}%;
+    bottom:0;
+    font-size:${20+Math.random()*30}px;
+    pointer-events:none;
+    z-index:200;
+    animation: heartRise ${2+Math.random()*2}s ease-in forwards;
+    --hr:${(Math.random()*20-10).toFixed(0)}deg;
+    --hr2:${(Math.random()*20-10).toFixed(0)}deg;
+    --hd:${(2+Math.random()*2).toFixed(1)}s;
+    --hdl:0s;
+  `;
+  h.className = 'heart-float';
+  h.style.opacity = '0';
+  h.textContent = ['❤️','💕','💖','💗','💓','🌸','✨'][Math.floor(Math.random()*7)];
+  document.body.appendChild(h);
+  setTimeout(() => h.remove(), 4000);
+}
+
+// Shake keyframe
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes shake {
+    0%,100% { transform: translateX(0) rotate(0); }
+    15%      { transform: translateX(-8px) rotate(-2deg); }
+    35%      { transform: translateX(8px) rotate(2deg); }
+    55%      { transform: translateX(-5px) rotate(-1deg); }
+    75%      { transform: translateX(5px) rotate(1deg); }
+  }
+`;
+document.head.appendChild(style);
+</script>
+</body>
+</html>
